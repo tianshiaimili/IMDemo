@@ -54,6 +54,7 @@ import com.way.service.XXService;
 import com.way.slidingmenu.BaseSlidingFragmentActivity;
 import com.way.slidingmenu.SlidingMenu;
 import com.way.util.L;
+import com.way.util.LogUtils2;
 import com.way.util.NetUtil;
 import com.way.util.PreferenceConstants;
 import com.way.util.PreferenceUtils;
@@ -86,6 +87,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 	private Handler mainHandler = new Handler();
 	private XXService mXxService;
 	private SlidingMenu mSlidingMenu;
+	/**显示没有网络连接的view*/
 	private View mNetErrorView;
 	/**用户名称*/
 	private TextView mTitleNameView;
@@ -103,6 +105,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
+			LogUtils2.i("Maintivity.onServiceConnected***");
 			mXxService = ((XXService.XXBinder) service).getService();
 			mXxService.registerConnectionStatusCallback(MainActivity.this);
 			// 开始连接xmpp服务器
@@ -136,6 +139,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		LogUtils2.d("***MainAcivity.onCreate");
 		startService(new Intent(MainActivity.this, XXService.class));
 
 		initSlidingMenu();
@@ -162,16 +166,18 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
+		LogUtils2.d("***  onResume");
 		bindXMPPService();
 		getContentResolver().registerContentObserver(
 				RosterProvider.CONTENT_URI, true, mRosterObserver);
 		setStatusImage(isConnected());
 		mRosterAdapter.requery();
 		XXBroadcastReceiver.mListeners.add(this);
-		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE)
+		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE){
 			mNetErrorView.setVisibility(View.VISIBLE);
-		else
+		}else{
 			mNetErrorView.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -219,7 +225,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 		Fragment mFrag = new SettingsFragment();
 		mFragementTransaction.replace(R.id.main_right_fragment, mFrag);
 		mFragementTransaction.commit();
-
+		
 		ImageButton mLeftBtn = ((ImageButton) findViewById(R.id.show_left_fragment_btn));
 		mLeftBtn.setVisibility(View.VISIBLE);
 		mLeftBtn.setOnClickListener(this);
@@ -422,7 +428,8 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 		mSlidingMenu.setShadowDrawable(R.drawable.shadow_left);// 设置左菜单阴影图片
 		mSlidingMenu.setBehindOffset(mScreenWidth / 5);// 设置菜单宽度
 		mSlidingMenu.setFadeDegree(0.35f);// 设置淡入淡出的比例
-		mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);//设置滑动的模式
+		mSlidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);//设置滑动的模式
+//		mSlidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);// 设置右菜单阴影图片
 		mSlidingMenu.setFadeEnabled(true);// 设置滑动时菜单的是否淡入淡出
 		mSlidingMenu.setBehindScrollScale(0.333f);// 设置滑动时拖拽效果
@@ -711,8 +718,12 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 						}).create().show();
 	}
 
+	/**
+	 * EventHandler的接口 方法
+	 * 网络改变时 如断开 做对应处理*/
 	@Override
 	public void onNetChange() {
+		LogUtils2.e("MainActivity.onNetChange");
 		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {
 			T.showShort(this, R.string.net_error_tip);
 			mNetErrorView.setVisibility(View.VISIBLE);
@@ -721,6 +732,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 		}
 	}
 
+	/**设置连接上server后 显示的在线状态picture*/
 	private void setStatusImage(boolean isConnected) {
 		if (!isConnected) {
 			mTitleStatusView.setVisibility(View.GONE);
@@ -737,6 +749,7 @@ public class MainActivity extends BaseSlidingFragmentActivity implements
 		}
 	}
 
+	/**网络变化 监听连接情况*/
 	@Override
 	public void connectionStatusChanged(int connectedState, String reason) {
 		switch (connectedState) {

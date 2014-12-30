@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.way.util.LogUtils2;
 import com.way.xx.R;
 
 public class SwipeBackLayout extends FrameLayout {
@@ -501,7 +502,8 @@ public class SwipeBackLayout extends FrameLayout {
 				}
 				if (mListeners != null && !mListeners.isEmpty()) {
 					for (SwipeListener listener : mListeners) {
-						listener.onEdgeTouch(mTrackingEdge);
+						LogUtils2.i("*****onEdgeTouch");
+						listener.onEdgeTouch(mTrackingEdge) ;
 					}
 				}
 				mIsScrollOverValid = true;

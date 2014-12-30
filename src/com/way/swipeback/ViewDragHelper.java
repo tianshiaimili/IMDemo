@@ -18,6 +18,8 @@ package com.way.swipeback;
 
 import java.util.Arrays;
 
+import com.way.util.LogUtils2;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
@@ -1047,6 +1049,7 @@ public class ViewDragHelper {
 			// Already done!
 			return true;
 		}
+		LogUtils2.i("****tryCaptureViewForDrag---");
 		if (toCapture != null && mCallback.tryCaptureView(toCapture, pointerId)) {
 			mActivePointerId = pointerId;
 			captureChildView(toCapture, pointerId);
@@ -1544,6 +1547,7 @@ public class ViewDragHelper {
 	 */
 	public boolean isEdgeTouched(int edges) {
 		final int count = mInitialEdgesTouched.length;
+		LogUtils2.i("count  == "+count);
 		for (int i = 0; i < count; i++) {
 			if (isEdgeTouched(edges, i)) {
 				return true;
@@ -1565,10 +1569,19 @@ public class ViewDragHelper {
 	 * @return true if any of the edges specified were initially touched in the
 	 *         current gesture
 	 */
-	public boolean isEdgeTouched(int edges, int pointerId) {
-		return isPointerDown(pointerId)
-				&& (mInitialEdgesTouched[pointerId] & edges) != 0;
-	}
+	public boolean isEdgeTouched(int edges, int pointerId) { 
+		LogUtils2.i("***isEdgeTouched----");
+		
+		boolean mIsPointerDown = isPointerDown(pointerId);
+		LogUtils2.i("***mIsPointerDown---- == "+mIsPointerDown);
+		//change this so it can swipe the fullScreen
+		//修改了 这里以后 虽然 可以对滑动整个屏幕生效，但是表情那里就划不得了
+		boolean mIsEdgesTouched = (mInitialEdgesTouched[pointerId] & edges) != 0 ||  (mInitialEdgesTouched[pointerId] & edges) == 0;
+//		boolean mIsEdgesTouched = (mInitialEdgesTouched[pointerId] & edges) != 0 ;
+		LogUtils2.d("***mIsEdgesTouched---- == "+mIsEdgesTouched);
+		
+		return mIsPointerDown && mIsEdgesTouched;
+ 	}
 
 	private void releaseViewForPointerUp() {
 		mVelocityTracker.computeCurrentVelocity(1000, mMaxVelocity);

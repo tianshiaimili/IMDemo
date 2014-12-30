@@ -69,10 +69,8 @@ public class LoginActivity extends FragmentActivity implements
 	private Animation mTipsAnimation;
 	
 	
-//	private String tempUserName = "admin@192.168.1.1";
-//	private String tempPassword = "huyue52099";
-	private String tempUserName = "admin4@192.168.1.100";
-	private String tempPassword = "123456";
+	private String tempUserName = "admin@172.20.171.1";
+	private String tempPassword = "huyue52099";
 
 	private Handler mHandler = new Handler() {
 
@@ -382,8 +380,9 @@ public class LoginActivity extends FragmentActivity implements
 			save2Preferences();
 			startActivity(new Intent(this, MainActivity.class));
 			finish();
-		} else if (connectedState == XXService.DISCONNECTED)
+		} else if (connectedState == XXService.DISCONNECTED){
 			T.showLong(LoginActivity.this, getString(R.string.request_failed)
 					+ reason);
+		}
 	}
 }

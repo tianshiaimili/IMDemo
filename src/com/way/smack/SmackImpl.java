@@ -188,6 +188,7 @@ public class SmackImpl implements Smack {
 			SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
 			SmackConfiguration.setKeepAliveInterval(-1);
 			SmackConfiguration.setDefaultPingInterval(0);
+			LogUtils2.d("******registerRosterListener*********");
 			registerRosterListener();// 监听联系人动态变化
 			mXMPPConnection.connect();
 			if (!mXMPPConnection.isConnected()) {
@@ -195,7 +196,7 @@ public class SmackImpl implements Smack {
 			}
 			mXMPPConnection.addConnectionListener(new ConnectionListener() {
 				public void connectionClosedOnError(Exception e) {
-					LogUtils2.e("********connectionClosedOnError");
+					LogUtils2.e("********connectionClosedOnError "+e.getMessage());
 					mService.postConnectionFailed(e.getMessage());
 				}
 
@@ -574,6 +575,7 @@ public class SmackImpl implements Smack {
 					RosterEntry rosterEntry = mRoster.getEntry(entry);
 					cvs[i++] = getContentValuesForRosterEntry(rosterEntry);
 				}
+				LogUtils2.i("mContentResolver.bulkInsert****");
 				mContentResolver.bulkInsert(RosterProvider.CONTENT_URI, cvs);
 				if (isFristRoter) {
 					isFristRoter = false;
