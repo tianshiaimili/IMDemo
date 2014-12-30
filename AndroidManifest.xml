@@ -86,7 +86,11 @@
         </activity>
 
         <service android:name="com.way.service.XXService" />
-
+<!-- 
+        android.net.conn.CONNECTIVITY_CHANGE 监听网络变化 
+        android.intent.action.BOOT_COMPLETED 在系统启动后，这个动作被广播一次（只有一次）
+        android.intent.action.ACTION_SHUTDOWN 系统关机广播
+         -->
         <receiver android:name="com.way.app.XXBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
