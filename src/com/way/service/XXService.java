@@ -135,6 +135,7 @@ public class XXService extends BaseService implements EventHandler,
 		BaseActivity.mListeners.add(this);
 		mActivityManager = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
 		mPackageName = getPackageName();
+		LogUtils2.i("mPackageName  = "+mPackageName);
 		mPAlarmIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		registerReceiver(mAlarmReceiver, new IntentFilter(RECONNECT_ALARM));
@@ -142,6 +143,7 @@ public class XXService extends BaseService implements EventHandler,
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		LogUtils2.i("****onStartCommand");
 		if (intent != null
 				&& intent.getAction() != null
 				&& TextUtils.equals(intent.getAction(),
@@ -348,18 +350,22 @@ public class XXService extends BaseService implements EventHandler,
 		if (mConnectionStatusCallback != null) {
 			mConnectionStatusCallback.connectionStatusChanged(mConnectedState,
 					reason);
-			if (mIsFirstLoginAction)// 如果是第一次登录,就算登录失败也不需要继续
+			if (mIsFirstLoginAction){
+				// 如果是第一次登录,就算登录失败也不需要继续
+				LogUtils2.e("***  mIsFirstLoginAction");
 				return;
+			}
 		}
 
 		// 无网络连接时,直接返回
 		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {
-			LogUtils2.i("********no net..........");
+			LogUtils2.e("********no net..........");
 			((AlarmManager) getSystemService(Context.ALARM_SERVICE))
 					.cancel(mPAlarmIntent);
 			return;
 		}
-
+		
+		LogUtils2.i("**XXXX**no net work..........");
 		String account = PreferenceUtils.getPrefString(XXService.this,
 				PreferenceConstants.ACCOUNT, "");
 		String password = PreferenceUtils.getPrefString(XXService.this,
@@ -526,6 +532,7 @@ public class XXService extends BaseService implements EventHandler,
 	private class ReconnectAlarmReceiver extends BroadcastReceiver {
 		public void onReceive(Context ctx, Intent i) {
 			L.d("Alarm received.");
+			LogUtils2.i("****ReconnectAlarmReceiver***********onReceive");
 			if (!PreferenceUtils.getPrefBoolean(XXService.this,
 					PreferenceConstants.AUTO_RECONNECT, true)) {
 				return;
@@ -546,6 +553,7 @@ public class XXService extends BaseService implements EventHandler,
 		}
 	}
 
+	/**如果网罗断开后 做处理*/
 	@Override
 	public void onNetChange() {
 		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {// 如果是网络断开，不作处理

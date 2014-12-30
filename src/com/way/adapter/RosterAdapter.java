@@ -92,7 +92,7 @@ public class RosterAdapter extends BaseExpandableListAdapter implements
 		if (!mIsShowOffline){
 			selectWhere = OFFLINE_EXCLUSION;
 		}
-		LogUtils2.i("GROUPS_QUERY_COUNTED = "+GROUPS_QUERY_COUNTED);
+//		LogUtils2.i("GROUPS_QUERY_COUNTED = "+GROUPS_QUERY_COUNTED);
 		Cursor groupCursor = mContentResolver.query(RosterProvider.GROUPS_URI,
 				GROUPS_QUERY_COUNTED, selectWhere, null, RosterConstants.GROUP);
 		
@@ -108,7 +108,7 @@ public class RosterAdapter extends BaseExpandableListAdapter implements
 		}
 		groupCursor.close();
 		L.i("cursor size = " + mGroupList.size());
-		LogUtils2.i("cursor size = " + mGroupList.size());
+//		LogUtils2.i("cursor size = " + mGroupList.size());
 		notifyDataSetChanged();
 	}
 
@@ -123,7 +123,7 @@ public class RosterAdapter extends BaseExpandableListAdapter implements
 			selectWhere += " AND " + OFFLINE_EXCLUSION;
 		}
 		
-		LogUtils2.i("ROSTER_QUERY = "+ROSTER_QUERY);
+//		LogUtils2.i("ROSTER_QUERY = "+ROSTER_QUERY);
 		Cursor childCursor = mContentResolver.query(RosterProvider.CONTENT_URI,
 				ROSTER_QUERY, selectWhere, new String[] { groupname }, null);
 		childCursor.moveToFirst();
